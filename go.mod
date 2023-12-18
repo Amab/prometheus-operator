@@ -28,7 +28,7 @@ require (
 	github.com/prometheus/common v0.45.0
 	github.com/prometheus/prometheus v0.48.1
 	github.com/stretchr/testify v1.8.4
-	github.com/thanos-io/thanos v0.32.5
+	github.com/thanos-io/thanos v0.33.0
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	golang.org/x/net v0.19.0
 	golang.org/x/sync v0.5.0
