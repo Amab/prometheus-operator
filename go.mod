@@ -1,6 +1,8 @@
 module github.com/prometheus-operator/prometheus-operator
 
 go 1.23.0
+toolchain go1.24.1
+
 require (
 	github.com/KimMachineGun/automemlimit v0.7.1
 	github.com/alecthomas/kingpin/v2 v2.4.0
@@ -29,7 +31,7 @@ require (
 	github.com/thanos-io/thanos v0.38.0
 	go.uber.org/automaxprocs v1.6.0
 	golang.org/x/net v0.38.0
-	golang.org/x/sync v0.12.0
+	golang.org/x/sync v0.13.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.32.3
