@@ -287,6 +287,10 @@ type ThanosRulerSpec struct {
 	// +kubebuilder:default:="15s"
 	EvaluationInterval Duration `json:"evaluationInterval,omitempty"`
 
+	// Minimum amount of time to wait before resending an alert to Alertmanager.
+	// +optional
+	ResendDelay *Duration `json:"resendDelay,omitempty"`
+
 	// Max time to tolerate prometheus outage for restoring "for" state of alert.
 	// It requires Thanos >= v0.30.0.
 	// +optional
@@ -303,6 +307,13 @@ type ThanosRulerSpec struct {
 	//
 	// +optional
 	RuleConcurrentEval *int32 `json:"ruleConcurrentEval,omitempty"`
+
+	// Minimum duration between alert and restored "for" state.
+	// This is maintained only for alerts with configured "for" time greater than grace period.
+	// It requires Thanos >= v0.30.0.
+	//
+	// +optional
+	RuleGracePeriod *Duration `json:"ruleGracePeriod,omitempty"`
 
 	// Time duration ThanosRuler shall retain data for. Default is '24h', and
 	// must match the regular expression `[0-9]+(ms|s|m|h|d|w|y)` (milliseconds
@@ -465,6 +476,19 @@ type ThanosRulerSpec struct {
 	// +kubebuilder:validation:Minimum:=0
 	// +optional
 	TerminationGracePeriodSeconds *int64 `json:"terminationGracePeriodSeconds,omitempty"`
+
+	// Enable access to Thanos Ruler feature flags. By default, no features are enabled.
+	//
+	// Enabling features which are disabled by default is entirely outside the
+	// scope of what the maintainers will support and by doing so, you accept
+	// that this behaviour may break at any time without notice.
+	//
+	// For more information see https://thanos.io/tip/components/rule.md/
+	//
+	// It requires Thanos >= 0.39.0.
+	// +listType:=set
+	// +optional
+	EnableFeatures []EnableFeature `json:"enableFeatures,omitempty"`
 }
 
 // ThanosRulerWebSpec defines the configuration of the ThanosRuler web server.

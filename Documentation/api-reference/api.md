@@ -405,7 +405,7 @@ bool
 </td>
 <td>
 <p>If set to true all actions on the underlying managed objects are not
-goint to be performed, except for delete actions.</p>
+going to be performed, except for delete actions.</p>
 </td>
 </tr>
 <tr>
@@ -4789,6 +4789,20 @@ Duration
 </tr>
 <tr>
 <td>
+<code>resendDelay</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.Duration">
+Duration
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Minimum amount of time to wait before resending an alert to Alertmanager.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>ruleOutageTolerance</code><br/>
 <em>
 <a href="#monitoring.coreos.com/v1.Duration">
@@ -4828,6 +4842,22 @@ int32
 <em>(Optional)</em>
 <p>How many rules can be evaluated concurrently.
 It requires Thanos &gt;= v0.37.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>ruleGracePeriod</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.Duration">
+Duration
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Minimum duration between alert and restored &ldquo;for&rdquo; state.
+This is maintained only for alerts with configured &ldquo;for&rdquo; time greater than grace period.
+It requires Thanos &gt;= v0.30.0.</p>
 </td>
 </tr>
 <tr>
@@ -5133,6 +5163,25 @@ int64
 Value must be non-negative integer. The value zero indicates stop immediately via
 the kill signal (no opportunity to shut down) which may lead to data corruption.</p>
 <p>Defaults to 120 seconds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>enableFeatures</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.EnableFeature">
+[]EnableFeature
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Enable access to Thanos Ruler feature flags. By default, no features are enabled.</p>
+<p>Enabling features which are disabled by default is entirely outside the
+scope of what the maintainers will support and by doing so, you accept
+that this behaviour may break at any time without notice.</p>
+<p>For more information see <a href="https://thanos.io/tip/components/rule.md/">https://thanos.io/tip/components/rule.md/</a></p>
+<p>It requires Thanos &gt;= 0.39.0.</p>
 </td>
 </tr>
 </table>
@@ -6351,7 +6400,7 @@ bool
 </td>
 <td>
 <p>If set to true all actions on the underlying managed objects are not
-goint to be performed, except for delete actions.</p>
+going to be performed, except for delete actions.</p>
 </td>
 </tr>
 <tr>
@@ -9905,7 +9954,7 @@ Kubernetes core/v1.PersistentVolumeClaimStatus
 <h3 id="monitoring.coreos.com/v1.EnableFeature">EnableFeature
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.CommonPrometheusFields">CommonPrometheusFields</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.CommonPrometheusFields">CommonPrometheusFields</a>, <a href="#monitoring.coreos.com/v1.ThanosRulerSpec">ThanosRulerSpec</a>)
 </p>
 <div>
 </div>
@@ -11451,6 +11500,34 @@ string
 <tbody>
 <tr>
 <td>
+<code>promoteAllResourceAttributes</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Promote all resource attributes to metric labels except the ones defined in <code>ignoreResourceAttributes</code>.</p>
+<p>Cannot be true when <code>promoteResourceAttributes</code> is defined.
+It requires Prometheus &gt;= v3.5.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>ignoreResourceAttributes</code><br/>
+<em>
+[]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>List of OpenTelemetry resource attributes to ignore when <code>promoteAllResourceAttributes</code> is true.</p>
+<p>It requires <code>promoteAllResourceAttributes</code> to be true.
+It requires Prometheus &gt;= v3.5.0.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>promoteResourceAttributes</code><br/>
 <em>
 []string
@@ -11458,7 +11535,8 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>List of OpenTelemetry Attributes that should be promoted to metric labels, defaults to none.</p>
+<p>List of OpenTelemetry Attributes that should be promoted to metric labels, defaults to none.
+Cannot be defined when <code>promoteAllResourceAttributes</code> is true.</p>
 </td>
 </tr>
 <tr>
@@ -18613,6 +18691,20 @@ Duration
 </tr>
 <tr>
 <td>
+<code>resendDelay</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.Duration">
+Duration
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Minimum amount of time to wait before resending an alert to Alertmanager.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>ruleOutageTolerance</code><br/>
 <em>
 <a href="#monitoring.coreos.com/v1.Duration">
@@ -18652,6 +18744,22 @@ int32
 <em>(Optional)</em>
 <p>How many rules can be evaluated concurrently.
 It requires Thanos &gt;= v0.37.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>ruleGracePeriod</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.Duration">
+Duration
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Minimum duration between alert and restored &ldquo;for&rdquo; state.
+This is maintained only for alerts with configured &ldquo;for&rdquo; time greater than grace period.
+It requires Thanos &gt;= v0.30.0.</p>
 </td>
 </tr>
 <tr>
@@ -18957,6 +19065,25 @@ int64
 Value must be non-negative integer. The value zero indicates stop immediately via
 the kill signal (no opportunity to shut down) which may lead to data corruption.</p>
 <p>Defaults to 120 seconds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>enableFeatures</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.EnableFeature">
+[]EnableFeature
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Enable access to Thanos Ruler feature flags. By default, no features are enabled.</p>
+<p>Enabling features which are disabled by default is entirely outside the
+scope of what the maintainers will support and by doing so, you accept
+that this behaviour may break at any time without notice.</p>
+<p>For more information see <a href="https://thanos.io/tip/components/rule.md/">https://thanos.io/tip/components/rule.md/</a></p>
+<p>It requires Thanos &gt;= 0.39.0.</p>
 </td>
 </tr>
 </tbody>

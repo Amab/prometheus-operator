@@ -4,7 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: alertmanagerconfigs.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -10805,7 +10805,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: alertmanagers.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -16712,7 +16712,7 @@ spec:
               paused:
                 description: |-
                   If set to true all actions on the underlying managed objects are not
-                  goint to be performed, except for delete actions.
+                  going to be performed, except for delete actions.
                 type: boolean
               persistentVolumeClaimRetentionPolicy:
                 description: |-
@@ -20325,7 +20325,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: podmonitors.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -21585,7 +21585,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: probes.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -22814,7 +22814,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: prometheusagents.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -27648,6 +27648,18 @@ spec:
                       Configures optional translation of OTLP explicit bucket histograms into native histograms with custom buckets.
                       It requires Prometheus >= v3.4.0.
                     type: boolean
+                  ignoreResourceAttributes:
+                    description: |-
+                      List of OpenTelemetry resource attributes to ignore when `promoteAllResourceAttributes` is true.
+
+                      It requires `promoteAllResourceAttributes` to be true.
+                      It requires Prometheus >= v3.5.0.
+                    items:
+                      minLength: 1
+                      type: string
+                    minItems: 1
+                    type: array
+                    x-kubernetes-list-type: set
                   keepIdentifyingResourceAttributes:
                     description: |-
                       Enables adding `service.name`, `service.namespace` and `service.instance.id`
@@ -27655,9 +27667,17 @@ spec:
 
                       It requires Prometheus >= v3.1.0.
                     type: boolean
+                  promoteAllResourceAttributes:
+                    description: |-
+                      Promote all resource attributes to metric labels except the ones defined in `ignoreResourceAttributes`.
+
+                      Cannot be true when `promoteResourceAttributes` is defined.
+                      It requires Prometheus >= v3.5.0.
+                    type: boolean
                   promoteResourceAttributes:
-                    description: List of OpenTelemetry Attributes that should be promoted
-                      to metric labels, defaults to none.
+                    description: |-
+                      List of OpenTelemetry Attributes that should be promoted to metric labels, defaults to none.
+                      Cannot be defined when `promoteAllResourceAttributes` is true.
                     items:
                       minLength: 1
                       type: string
@@ -33620,6 +33640,8 @@ spec:
             - message: persistentVolumeClaimRetentionPolicy cannot be set when mode
                 is DaemonSet
               rule: '!(has(self.mode) && self.mode == ''DaemonSet'' && has(self.persistentVolumeClaimRetentionPolicy))'
+            - message: scrapeConfigSelector cannot be set when mode is DaemonSet
+              rule: '!(has(self.mode) && self.mode == ''DaemonSet'' && has(self.scrapeConfigSelector))'
           status:
             description: |-
               Most recent observed status of the Prometheus cluster. Read-only.
@@ -33772,7 +33794,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: prometheuses.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -39377,6 +39399,18 @@ spec:
                       Configures optional translation of OTLP explicit bucket histograms into native histograms with custom buckets.
                       It requires Prometheus >= v3.4.0.
                     type: boolean
+                  ignoreResourceAttributes:
+                    description: |-
+                      List of OpenTelemetry resource attributes to ignore when `promoteAllResourceAttributes` is true.
+
+                      It requires `promoteAllResourceAttributes` to be true.
+                      It requires Prometheus >= v3.5.0.
+                    items:
+                      minLength: 1
+                      type: string
+                    minItems: 1
+                    type: array
+                    x-kubernetes-list-type: set
                   keepIdentifyingResourceAttributes:
                     description: |-
                       Enables adding `service.name`, `service.namespace` and `service.instance.id`
@@ -39384,9 +39418,17 @@ spec:
 
                       It requires Prometheus >= v3.1.0.
                     type: boolean
+                  promoteAllResourceAttributes:
+                    description: |-
+                      Promote all resource attributes to metric labels except the ones defined in `ignoreResourceAttributes`.
+
+                      Cannot be true when `promoteResourceAttributes` is defined.
+                      It requires Prometheus >= v3.5.0.
+                    type: boolean
                   promoteResourceAttributes:
-                    description: List of OpenTelemetry Attributes that should be promoted
-                      to metric labels, defaults to none.
+                    description: |-
+                      List of OpenTelemetry Attributes that should be promoted to metric labels, defaults to none.
+                      Cannot be defined when `promoteAllResourceAttributes` is true.
                     items:
                       minLength: 1
                       type: string
@@ -46985,7 +47027,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: prometheusrules.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -47145,7 +47187,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: scrapeconfigs.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -59691,7 +59733,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: servicemonitors.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -61068,7 +61110,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-    operator.prometheus.io/version: 0.83.0
+    operator.prometheus.io/version: 0.84.0
   name: thanosrulers.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -63670,6 +63712,22 @@ spec:
                 - Default
                 - None
                 type: string
+              enableFeatures:
+                description: |-
+                  Enable access to Thanos Ruler feature flags. By default, no features are enabled.
+
+                  Enabling features which are disabled by default is entirely outside the
+                  scope of what the maintainers will support and by doing so, you accept
+                  that this behaviour may break at any time without notice.
+
+                  For more information see https://thanos.io/tip/components/rule.md/
+
+                  It requires Thanos >= 0.39.0.
+                items:
+                  minLength: 1
+                  type: string
+                type: array
+                x-kubernetes-list-type: set
               enableServiceLinks:
                 description: Indicates whether information about services should be
                   injected into pod's environment variables
@@ -66704,6 +66762,11 @@ spec:
                 description: Number of thanos ruler instances to deploy.
                 format: int32
                 type: integer
+              resendDelay:
+                description: Minimum amount of time to wait before resending an alert
+                  to Alertmanager.
+                pattern: ^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$
+                type: string
               resources:
                 description: |-
                   Resources defines the resource requirements for single Pods.
@@ -66787,6 +66850,13 @@ spec:
                 format: int32
                 minimum: 1
                 type: integer
+              ruleGracePeriod:
+                description: |-
+                  Minimum duration between alert and restored "for" state.
+                  This is maintained only for alerts with configured "for" time greater than grace period.
+                  It requires Thanos >= v0.30.0.
+                pattern: ^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$
+                type: string
               ruleNamespaceSelector:
                 description: |-
                   Namespaces to be selected for Rules discovery. If unspecified, only
@@ -70356,7 +70426,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: 0.83.0
+    app.kubernetes.io/version: 0.84.0
   name: prometheus-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -70373,7 +70443,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: 0.83.0
+    app.kubernetes.io/version: 0.84.0
   name: prometheus-operator
 rules:
 - apiGroups:
@@ -70482,7 +70552,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: 0.83.0
+    app.kubernetes.io/version: 0.84.0
   name: prometheus-operator
   namespace: default
 spec:
@@ -70498,19 +70568,19 @@ spec:
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: prometheus-operator
-        app.kubernetes.io/version: 0.83.0
+        app.kubernetes.io/version: 0.84.0
     spec:
       automountServiceAccountToken: true
       containers:
       - args:
         - --kubelet-service=kube-system/kubelet
-        - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0
+        - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.84.0
         - --kubelet-endpoints=true
         - --kubelet-endpointslice=false
         env:
         - name: GOGC
           value: "30"
-        image: quay.io/prometheus-operator/prometheus-operator:v0.83.0
+        image: quay.io/prometheus-operator/prometheus-operator:v0.84.0
         name: prometheus-operator
         ports:
         - containerPort: 8080
@@ -70544,7 +70614,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: 0.83.0
+    app.kubernetes.io/version: 0.84.0
   name: prometheus-operator
   namespace: default
 ---
@@ -70554,7 +70624,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: 0.83.0
+    app.kubernetes.io/version: 0.84.0
   name: prometheus-operator
   namespace: default
 spec:

@@ -68,10 +68,10 @@ type ResourceSelector struct {
 	eventRecorder record.EventRecorder
 }
 
-// ResourcesSelection represents a slice of configuration resources selected by Prometheus or PrometheusAgent.
-type ResourcesSelection[T configurationResource] []struct {
+// ResourcesSelection represents a map of configuration resources selected by Prometheus or PrometheusAgent.
+// The map's key is the full resource name in the "<namespace>/<name>" form.
+type ResourcesSelection[T configurationResource] map[string]struct {
 	resource T
-	key      string
 	err      error  // error encountered during selection or validation (nil if valid).
 	reason   string // Reason for rejection; empty if accepted.
 }
@@ -80,9 +80,9 @@ type ResourcesSelection[T configurationResource] []struct {
 // The keys of the returned map identify the resources using the `<namespace>/<name>` format.
 func (resources ResourcesSelection[T]) ValidResources() map[string]T {
 	validRes := make(map[string]T)
-	for _, res := range resources {
+	for k, res := range resources {
 		if res.err == nil {
-			validRes[res.key] = res.resource
+			validRes[k] = res.resource
 		}
 	}
 	return validRes
@@ -175,7 +175,7 @@ func selectObjects[T configurationResource](
 	}
 
 	var rejected int
-	res := make(ResourcesSelection[T], 0, len(objects))
+	res := make(ResourcesSelection[T], len(objects))
 	for namespaceAndName, obj := range objects {
 		var reason string
 		o := obj.(T)
@@ -186,22 +186,20 @@ func selectObjects[T configurationResource](
 			logger.Warn("skipping object", "error", err.Error(), "object", namespaceAndName)
 			rs.eventRecorder.Eventf(obj, v1.EventTypeWarning, operator.InvalidConfigurationEvent, "%q was rejected due to invalid configuration: %v", namespaceAndName, err)
 		}
-		res = append(res, struct {
+		res[namespaceAndName] = struct {
 			resource T
-			key      string
 			err      error
 			reason   string
 		}{
 			resource: o,
-			key:      namespaceAndName,
 			err:      err,
 			reason:   reason,
-		})
+		}
 	}
 
 	keys := []string{}
-	for _, r := range res {
-		keys = append(keys, r.key)
+	for k := range res {
+		keys = append(keys, k)
 	}
 	logger.Debug("objects selected", "objects", strings.Join(keys, ","))
 
@@ -219,7 +217,7 @@ func selectObjects[T configurationResource](
 func (rs *ResourceSelector) SelectServiceMonitors(ctx context.Context, listFn ListAllByNamespaceFn) (ResourcesSelection[*monitoringv1.ServiceMonitor], error) {
 	cpf := rs.p.GetCommonPrometheusFields()
 
-	return selectObjects[*monitoringv1.ServiceMonitor](
+	return selectObjects(
 		ctx,
 		rs.l.With("kind", monitoringv1.ServiceMonitorsKind),
 		rs,
@@ -463,7 +461,7 @@ func (rs *ResourceSelector) validateMonitorSelectorMechanism(selectorMechanism *
 func (rs *ResourceSelector) SelectPodMonitors(ctx context.Context, listFn ListAllByNamespaceFn) (ResourcesSelection[*monitoringv1.PodMonitor], error) {
 	cpf := rs.p.GetCommonPrometheusFields()
 
-	return selectObjects[*monitoringv1.PodMonitor](
+	return selectObjects(
 		ctx,
 		rs.l.With("kind", monitoringv1.PodMonitorsKind),
 		rs,
@@ -540,7 +538,7 @@ func (rs *ResourceSelector) checkPodMonitor(ctx context.Context, pm *monitoringv
 func (rs *ResourceSelector) SelectProbes(ctx context.Context, listFn ListAllByNamespaceFn) (ResourcesSelection[*monitoringv1.Probe], error) {
 	cpf := rs.p.GetCommonPrometheusFields()
 
-	return selectObjects[*monitoringv1.Probe](
+	return selectObjects(
 		ctx,
 		rs.l.With("kind", monitoringv1.ProbesKind),
 		rs,
@@ -650,7 +648,7 @@ func validateServer(server string) error {
 func (rs *ResourceSelector) SelectScrapeConfigs(ctx context.Context, listFn ListAllByNamespaceFn) (ResourcesSelection[*monitoringv1alpha1.ScrapeConfig], error) {
 	cpf := rs.p.GetCommonPrometheusFields()
 
-	return selectObjects[*monitoringv1alpha1.ScrapeConfig](
+	return selectObjects(
 		ctx,
 		rs.l.With("kind", monitoringv1alpha1.ScrapeConfigsKind),
 		rs,
